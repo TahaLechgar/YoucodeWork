@@ -19,9 +19,12 @@ Route::get('/index', function () {
 })->name('pagee');
 Route::get('/', function () {
     return view('index');
-    })->name('home');   
-    
+    })->name('home');
+
 Route::get('/dashboard', [StudentController::class, 'Role'])->middleware(['auth'])->name('dashboard');
+Route::get('/pending-projects', [StudentController::class, 'studentPendingProjects'])->middleware(['auth'])->name('pending-projects');
+Route::get('/accepted-projects', [StudentController::class, 'studentAcceptedProjects'])->middleware(['auth'])->name('accepted-projects');
+Route::get('/all-projects', [StudentController::class, 'studentAllProject'])->middleware(['auth'])->name('all-projects');
 
 /*Route::get('/dashboard', function () {
     if(Auth::user()->role == 'recruiter'){
@@ -35,7 +38,7 @@ Route::get('/dashboard', [StudentController::class, 'Role'])->middleware(['auth'
 
 Route::get('/post-project', function () {return view('post-project');})->name('post-project');
 Route::get('/apprenant-dashboard', function () {return view('apprenant-dashboard');})->name('apprenant-dashboard');
-Route::get('/manage-projects', function () { return view('manage-projects');})->name('manage-projects');
+//Route::get('/manage-projects', function () { return view('manage-projects');})->name('manage-projects');
 //Route::get('/freelancer-project-proposals', [ProjectController::class, 'allProjects'])->middleware(['auth'])->name('freelancer-project-proposals');
 Route::post('/post-project', [ProjectController::class, 'store'])->middleware(['auth'])->name('store-project');
 Route::get('/project-details/{projectId}', [ProjectController::class, 'projectById'])->middleware(['auth'])->name('project-details');

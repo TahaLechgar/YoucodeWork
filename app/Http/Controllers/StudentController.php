@@ -16,91 +16,46 @@ class StudentController extends Controller
 
     public function Role(){
 
-    if(Auth::user()->role == 'recruiter'){
-        return view('dashboard');
-    } else if (Auth::user()->role == 'student'){
-
-        return StudentController::DashboardApprenant();
-    }
+        if(Auth::user()->role == 'recruiter'){
+            return view('dashboard');
+        } else if (Auth::user()->role == 'student'){
+            return StudentController::studentDashboard();
+        }
    }
 
 
     public function DashboardApprenant(){
 
-      /*  $client = new \GuzzleHttp\Client();
+        /*  $client = new \GuzzleHttp\Client();
+          $response = $client->request('POST', 'http://admin.youcode.school/api/login', [
+              'form_params' => [
+                  'email' => 'sedraoui.fatimaezzahra@gmail.com',
+                  'password'     => '',
+              ]
+          ]);
+          // echo $response->getStatusCode(); // 200
+          // echo $response->getHeaderLine('content-type'); // 'application/json; charset=utf8'
 
-        $response = $client->request('POST', 'http://admin.youcode.school/api/login', [
-            'form_params' => [
-                'email' => 'sedraoui.fatimaezzahra@gmail.com',
-                'password'     => '',
-            ]
-        ]);
-
-        // echo $response->getStatusCode(); // 200
-        // echo $response->getHeaderLine('content-type'); // 'application/json; charset=utf8'
-
-
-        $body = json_decode($response->getBody(), true); // '{"id": 1420053, "name": "guzzle", ...}'
-        $res = $client->request('GET', 'http://admin.youcode.school/api/promotions', [
-            'headers' => [
-                'User-Agent' => 'testing/1.0',
-                'Accept'     => 'application/json',
-                'Authorization'      => 'Bearer ' . $body['access_token']
-            ]
-        ]);
-
-       // $body = json_decode($res->getBody(), true); // '{"id": 1420053, "name": "guzzle", ...}'
-       // print_r($body);*/
+          $body = json_decode($response->getBody(), true); // '{"id": 1420053, "name": "guzzle", ...}'
+          $res = $client->request('GET', 'http://admin.youcode.school/api/promotions', [
+              'headers' => [
+                  'User-Agent' => 'testing/1.0',
+                  'Accept'     => 'application/json',
+                  'Authorization'      => 'Bearer ' . $body['access_token']
+              ]
+          ]);
+         // $body = json_decode($res->getBody(), true); // '{"id": 1420053, "name": "guzzle", ...}'
+         // print_r($body);*/
         $currentUser = Auth::user();
         //var_dump($currentUser);
-        try{
-            $student = Student::where('id_user', Auth::user()->id)->firstOrFail();
-        }
-        catch(Exception $exception){
-            dd($exception);
-        }
+        $student = Student::where('id_user', Auth::user()->id)->firstOrFail();
 
         // $projectsBystudent=$student->projects;
         //($student)
         //$student->projects();
 
         $allTechnologiesStudent = [];
-       foreach ($student->projects as $project) {
-        $tags = trim($project->tags,'"');
-        $tags = explode(',', $tags);
-        $project->tags = $tags;
-        $technologies = trim($project->technologies,'"');
-        $technologies = explode(',', $technologies);
-        $project->technologies = $technologies;
-        foreach($technologies as $technology){
-            array_push($allTechnologiesStudent, $technology);
-        }
-        $allTechnologies = array_unique($allTechnologiesStudent);
-    }
-
-
-//        $acceptedProjects = [];
-//
-//       foreach ($student->acceptedProjects as $acceptedProject){
-//           $acceptedProjects[] = $project->id;
-//       }
-//        dd($acceptedProjects);
-
-        $projectsCountByStatus = [];
-        $projectsCountByStatus['accepted'] = $student->acceptedProjects()->count();
-        $projectsCountByStatus['pending'] = $student->pendingProjects()->count();
-        $projectsCountByStatus['all'] = $student->projects()->count();
-
-    return view('dashboard',compact("student", "projectsCountByStatus", "allTechnologiesStudent"));
-}
-
-    public function studentDashboard()
-    {
-        $currentUserId = Auth::id();
-        $student = Student::where('id_user', $currentUserId)->firstOrFail();
-
-        $allTechnologiesStudent = [];
-        foreach ($student->project as $project) {
+        foreach ($student->projects as $project) {
             $tags = trim($project->tags,'"');
             $tags = explode(',', $tags);
             $project->tags = $tags;
@@ -109,15 +64,121 @@ class StudentController extends Controller
             $project->technologies = $technologies;
             foreach($technologies as $technology){
                 array_push($allTechnologiesStudent, $technology);
+
             }
             $allTechnologies = array_unique($allTechnologiesStudent);
         }
 
-        $acceptedProjects = $student->acceptedProjects();
-        dd((new \App\Models\Student)->belongsToMany(Project::class));
 
 
+        return view('dashboard',compact("student", "allTechnologiesStudent"));
     }
+
+
+
+    public function studentDashboard()
+    {
+
+        try{
+            $student = Student::where('id_user', Auth::user()->id)->firstOrFail();
+        }
+        catch(Exception $exception){
+            dd($exception);
+        }
+
+
+        $allTechnologiesStudent = [];
+        foreach ($student->projects as $project) {
+            $tags = trim($project->tags,'"');
+            $tags = explode(',', $tags);
+            $project->tags = $tags;
+            $technologies = trim($project->technologies,'"');
+            $technologies = explode(',', $technologies);
+            $project->technologies = $technologies;
+            foreach($technologies as $technology){
+                $allTechnologiesStudent[] = $technology;
+            }
+        }
+        $allTechnologies = array_unique($allTechnologiesStudent);
+
+        $projectsCountByStatus = [];
+        $projectsCountByStatus['accepted'] = $student->acceptedProjects()->count();
+        $projectsCountByStatus['pending'] = $student->pendingProjects()->count();
+        $projectsCountByStatus['all'] = $student->projects()->count();
+
+        return view('dashboard',compact("student", "projectsCountByStatus", "allTechnologies"));
+    }
+
+    public function studentPendingProjects()
+    {
+
+        try{
+            $student = Student::where('id_user', Auth::user()->id)->firstOrFail();
+        }
+        catch(Exception $exception){
+            dd($exception);
+        }
+
+
+        $projects = $student->pendingProjects;
+        foreach ($projects as $project) {
+            $tags = trim($project->tags,'"}]{[()/\\|');
+            $project->tags = $tags;
+            $technologies = trim($project->technologies,'"}]{[()/\\|');
+            $project->technologies = $technologies;
+        }
+        $title = 'Les projets en attente de validation :';
+        return view('manage-projects', compact('projects', 'title'));
+    }
+
+
+    public function studentAcceptedProjects()
+    {
+
+        try{
+            $student = Student::where('id_user', Auth::user()->id)->firstOrFail();
+        }
+        catch(Exception $exception){
+            dd($exception);
+        }
+
+
+        $projects = $student->acceptedProjects;
+        foreach ($projects as $project) {
+            $tags = trim($project->tags,'"}]{[()/\\|');
+            $project->tags = $tags;
+            $technologies = trim($project->technologies,'"}]{[()/\\|');
+            $project->technologies = $technologies;
+        }
+
+        $title = 'Les projets validés :';
+        return view('manage-projects', compact('projects','title'));
+    }
+
+    public function studentAllProject()
+    {
+
+        try{
+            $student = Student::where('id_user', Auth::user()->id)->firstOrFail();
+        }
+        catch(Exception $exception){
+            dd($exception);
+        }
+
+
+        $projects = $student->projects;
+        foreach ($projects as $project) {
+            $tags = trim($project->tags,'"}]{[()/\\|');
+            $project->tags = $tags;
+            $technologies = trim($project->technologies,'"}]{[()/\\|');
+            $project->technologies = $technologies;
+        }
+
+        $title = 'Tous les projets validés :';
+        return view('manage-projects', compact('projects','title'));
+    }
+
+
 
 /*public function projectsByTechnology($technology){
 
