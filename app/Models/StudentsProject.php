@@ -9,6 +9,8 @@ class StudentsProject extends Model
 {
     use HasFactory;
 
+    protected $table = 'project_student';
+
     public function projects(){
         return $this->belongsTo(Project::class);
     }
@@ -16,6 +18,6 @@ class StudentsProject extends Model
     public function students(){
         return $this->belongsTo(Student::class);
     }
-    
-    
+
+
 }

@@ -13,27 +13,48 @@ class ProjectController extends Controller
     //
 
     public function store(Request $request){
+
+        $request->validate([
+            'name' => 'required',
+            'description' => 'required',
+            'repoLink' => 'required',
+            'lienImage1' => 'required',
+            'tags' => 'required',
+            'technologies' => 'required'
+        ]);
+
         $project = new Project;
         $project->name = $request->name;
-        $project->description = $request->description;
+        $pTag = array("<p>", "</p>");
+        $project->description = str_replace($pTag, "", $request->description);
         $project->repoLink = $request->repoLink;
         $project->lienImage1 = $request->lienImage1;
-        $project->tags = json_encode( $request->technologies);
-        $project->technologies = json_encode(['golang','php']);
-        $project->authorId = Auth::user()->id;
+        $project->technologies = json_encode( $request->technologies);
+        $project->tags = json_encode($request->tags);
+//        $project->authorId = Auth::user()->id;
         $project->status = 'PENDING';
         $project->instructorId = 2;
+        $project->authorId = Student::firstWhere('id_user', Auth::user()->id)->id;
 
-
+        $contributorsEmail = explode(",", $request->contributors);
+        $contributorsId = [];
+        foreach ($contributorsEmail as $contributor){
+            $student = Student::firstWhere('email', $contributor);
+            if(!$student) dd($contributor . ' => this email is not exist');
+            $contributorsId[] = $student->id;
+        }
+        $request->contributors = $contributorsId;
         $project->save();
 
        /* $student = Student::find([3, 4]);
         $product->categories()->attach($category);*/
         return redirect()->route('dashboard');
     }
+
+
 //all project
     public function allProjects(){
-        
+
             $projects = Project::all();
             $allTechnologies = [];
            foreach ($projects as $project) {
@@ -42,15 +63,14 @@ class ProjectController extends Controller
             $project->tags = $tags;
             $technologies = trim($project->technologies,'"');
             $technologies = explode(',', $technologies);
-            $project->technologies = $technologies;  
+            $project->technologies = $technologies;
             foreach($technologies as $technology){
-                array_push($allTechnologies, $technology);    
-
+                array_push($allTechnologies, $technology);
             }
             $allTechnologies = array_unique($allTechnologies);
         }
- 
- 
+
+
         $currentUser = Auth::user();
         return view('blog-grid',compact("projects","currentUser", "allTechnologies"));
     }
@@ -71,22 +91,22 @@ class ProjectController extends Controller
             $project->tags = $tags;
             $technologies = trim($project->technologies,'"');
             $technologies = explode(',', $technologies);
-            $project->technologies = $technologies;  
-            
+            $project->technologies = $technologies;
+
         }
 
         foreach ($allProjects as $project) {
             $technologies = trim($project->technologies,'"');
             $technologies = explode(',', $technologies);
-            $project->technologies = $technologies;  
+            $project->technologies = $technologies;
             foreach($technologies as $technology){
-                array_push($allTechnologies, $technology);    
+                array_push($allTechnologies, $technology);
 
             }
             $allTechnologies = array_unique($allTechnologies);
         }
- 
- 
+
+
         $currentUser = Auth::user();
         return view('blog-grid',compact("projects","currentUser", "allTechnologies"));
     }
@@ -105,13 +125,15 @@ class ProjectController extends Controller
         $project->tags = $tags;
         $technologies = trim($project->technologies,'"');
         $technologies = explode(',', $technologies);
-        $project->technologies = $technologies;  
-        
+        $project->technologies = $technologies;
+
     }
 
     $currentUser = Auth::user();
 
     return view('project-details',compact("project","currentUser"));
     }
+
+
 
 }

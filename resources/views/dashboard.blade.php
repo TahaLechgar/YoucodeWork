@@ -1,6 +1,6 @@
 <?php $page="freelancer-dashboard";?>
 @extends('layout.mainlayout')
-@section('content')		
+@section('content')
 
 
 <!-- Page Content -->
@@ -61,8 +61,8 @@
 										</li>
 									</ul>
 								</div>
-							</div>					
-						</div>	
+							</div>
+						</div>
 
 						<div class="col-xl-9 col-md-8">
 							<div class="dashboard-sec">
@@ -71,7 +71,7 @@
 										<div class="dash-widget">
 											<div class="dash-info">
 												<div class="dash-widget-info">Projets en attente de validation</div>
-												<div class="dash-widget-count">{{$student->projects()->count()}}</div>
+												<div class="dash-widget-count">{{$projectsCountByStatus['pending']}}</div>
 											</div>
 											<div class="dash-widget-more">
 												<a href="freelancer-completed-projects" class="d-flex">View Details <i class="fas fa-arrow-right ms-auto"></i></a>
@@ -82,7 +82,7 @@
 										<div class="dash-widget">
 											<div class="dash-info">
 												<div class="dash-widget-info">Projets validés</div>
-												<div class="dash-widget-count">5</div>
+												<div class="dash-widget-count">{{$projectsCountByStatus['accepted']}}</div>
 											</div>
 											<div class="dash-widget-more">
 												<a href="freelancer-completed-projects" class="d-flex">View Details <i class="fas fa-arrow-right ms-auto"></i></a>
@@ -93,7 +93,7 @@
 										<div class="dash-widget">
 											<div class="dash-info">
 												<div class="dash-widget-info">Tous mes projets</div>
-												<div class="dash-widget-count">25</div>
+												<div class="dash-widget-count">{{$projectsCountByStatus['all']}}</div>
 											</div>
 											<div class="dash-widget-more">
 												<a href="freelancer-review" class="d-flex">View Details <i class="fas fa-arrow-right ms-auto"></i></a>
@@ -101,31 +101,31 @@
 										</div>
 									</div>
 								</div>
-								
+
 								<!-- Chart Content -->
 								<div class="row">
 									<div class="col-xl-8 d-flex">
 										<div class="card flex-fill">
-											<div class="pro-head">	
-												<h5 class="card-title mb-0">Projets Postés</h5> 
-												<div class="month-detail">	
+											<div class="pro-head">
+												<h5 class="card-title mb-0">Projets Postés</h5>
+												<div class="month-detail">
 													<select class="form-control">
 														<option value="0">Last 6 months</option>
 														<option value="1" >Last 2 months</option>
 													</select>
 												</div>
 											</div>
-											<div class="pro-body">									
+											<div class="pro-body">
 												<div id="chartprofile"></div>
 											</div>
 										</div>
 									</div>
 									<div class="col-xl-4 d-flex">
 										<div class="flex-fill card">
-											<div class="pro-head b-0">	
-												<h5 class="card-title mb-0">Technologie & Tags</h5> 
+											<div class="pro-head b-0">
+												<h5 class="card-title mb-0">Technologie & Tags</h5>
 											</div>
-											<div class="pro-body">									
+											<div class="pro-body">
 												<div id="chartradial"></div>
 												<ul class="static-list">
 													<li><span><i class="fas fa-circle text-violet me-1"></i> Applied Jobs</span> <span class="sta-count">30</span></li>
@@ -138,16 +138,16 @@
 									</div>
 								</div>
 								<!-- /Chart Content -->
-								
-								
-								
-								
-								
-							</div>								
-						</div>								
-					</div>					
+
+
+
+
+
+							</div>
+						</div>
+					</div>
 				</div>
-			</div>				
+			</div>
 			<!-- /Page Content -->
 
 

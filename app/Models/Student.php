@@ -14,7 +14,26 @@ class Student extends Model
         return $this->belongsToMany(Project::class);
     }
 
+    public function acceptedProjects()
+    {
+        return $this
+            ->belongsToMany(Project::class)
+            ->where('status', '=', 'ACCEPTED');
+    }
+
+//    public function userByEmail(String $email)
+//    {
+//        return $this->where('email', '=', $email);
+//    }
+
+    public function pendingProjects()
+    {
+        return $this
+            ->belongsToMany(Project::class)
+            ->where('status', '=', 'PENDING');
+    }
+
     public function user(){
         return $this->belongsTo(User::class);
-    }    
+    }
 }
